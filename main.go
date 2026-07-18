@@ -61,7 +61,8 @@ func handleScan(ctx context.Context, req sdk.ToolRequest) (*pluginv1.InvokeToolR
 		return resp.Build(), nil
 	}
 
-	for _, f := range findings {
+	for i := range findings {
+		f := &findings[i]
 		fb := resp.Finding(f.RuleID, f.Severity, f.Confidence, f.Message).
 			At(f.Path, 0, 0).
 			WithMetadata("cwe", f.CWE).
@@ -112,7 +113,8 @@ func handleDrift(ctx context.Context, req sdk.ToolRequest) (*pluginv1.InvokeTool
 		return resp.Build(), nil
 	}
 
-	for _, f := range findings {
+	for i := range findings {
+		f := &findings[i]
 		fb := resp.Finding(f.RuleID, f.Severity, f.Confidence, f.Message).
 			At(f.Path, 0, 0).
 			WithMetadata("cwe", f.CWE).

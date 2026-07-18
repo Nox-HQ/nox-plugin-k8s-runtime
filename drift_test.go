@@ -283,7 +283,8 @@ func keysOf(m map[string]iacWorkload) []string {
 }
 
 func hasRule(findings []Finding, ruleID string) bool {
-	for _, f := range findings {
+	for i := range findings {
+		f := &findings[i]
 		if f.RuleID == ruleID {
 			return true
 		}
@@ -293,7 +294,8 @@ func hasRule(findings []Finding, ruleID string) bool {
 
 func ruleSet(findings []Finding) []string {
 	out := make([]string, 0, len(findings))
-	for _, f := range findings {
+	for i := range findings {
+		f := &findings[i]
 		out = append(out, f.RuleID+"="+string(f.Severity))
 	}
 	return out

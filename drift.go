@@ -170,7 +170,7 @@ func (s *Scanner) ScanDrift(ctx context.Context, namespace, iacPath string) ([]F
 			continue
 		}
 		matched[key] = true
-		findings = append(findings, compareWorkload(pod, wl)...)
+		findings = append(findings, compareWorkload(pod, &wl)...)
 	}
 
 	return findings, nil
@@ -200,7 +200,7 @@ func podWorkloadKey(pod *corev1.Pod) string {
 }
 
 // compareWorkload diffs a running pod against its declared spec.
-func compareWorkload(pod *corev1.Pod, wl iacWorkload) []Finding {
+func compareWorkload(pod *corev1.Pod, wl *iacWorkload) []Finding {
 	var findings []Finding
 
 	desiredContainers := indexContainersByName(wl.Spec.Containers)
