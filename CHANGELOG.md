@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+- chore(deps): Go 1.26.5 and nox SDK v1.17.0 (#24)
+- chore(security): nox remediation (deps + actions) (#23)
+- ci: add nox-remediate caller (deps + action-pin remediation)
+- ci: point the registry notice at where entries actually go (#22)
+- ci: add nox self-scan and changed-files PR gate (#21)
+
+
 ## [0.7.0] - 2026-07-18
 
 ### Added
