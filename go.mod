@@ -3,7 +3,7 @@ module github.com/nox-hq/nox-plugin-k8s-runtime
 go 1.26.5
 
 require (
-	github.com/nox-hq/nox v1.26.0
+	github.com/nox-hq/nox v1.27.0
 	google.golang.org/grpc v1.83.0
 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
 	k8s.io/api v0.36.3
