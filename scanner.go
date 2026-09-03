@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strings"
 
 	pluginv1 "github.com/nox-hq/nox/gen/nox/plugin/v1"
@@ -82,9 +83,12 @@ func (s *Scanner) ScanCluster(ctx context.Context, namespace string) ([]Finding,
 
 		// Pod-level checks.
 		findings = append(findings, s.checkHostNamespace(pod)...)
-		findings = append(findings, s.checkNetworkPolicy(pod, namespacesWithNetPol)...)
 		findings = append(findings, s.checkServiceAccountToken(pod)...)
 	}
+
+	// Namespace-level checks run once per namespace, not once per pod. See
+	// checkNetworkPolicies.
+	findings = append(findings, checkNetworkPolicies(pods.Items, namespacesWithNetPol)...)
 
 	return findings, nil
 }
@@ -272,21 +276,57 @@ func (s *Scanner) checkHostNamespace(pod *corev1.Pod) []Finding {
 	return findings
 }
 
-// checkNetworkPolicy checks KRUNT-004: No network policy in namespace.
-func (s *Scanner) checkNetworkPolicy(pod *corev1.Pod, namespacesWithNetPol map[string]bool) []Finding {
-	if namespacesWithNetPol[pod.Namespace] {
-		return nil
+// checkNetworkPolicies checks KRUNT-004: no NetworkPolicy in a namespace.
+//
+// "This namespace has no NetworkPolicy" is one fact about the namespace, so it
+// is reported once. It used to be evaluated inside the per-pod loop, which
+// emitted it once per pod: on a real cluster that turned 5 facts into 49
+// findings, 27 of them the identical sentence about longhorn-system. Volume
+// like that does not add information, it buries the seven other rules.
+//
+// The path is the namespace rather than a pod for the same reason it matters
+// operationally: anchoring a namespace-level fact to `k8s://<ns>/Pod/<name>`
+// tied its fingerprint to a pod name that changes on every deploy, so a
+// baseline entry or waiver for it broke the next time the pod was replaced.
+//
+// Namespaces are taken from the pods observed, so this needs no additional
+// RBAC beyond the pod list the scan already does. A namespace containing no
+// pods is therefore not reported — it has no workload whose traffic a policy
+// would govern, and listing namespaces directly would make the whole scan fail
+// where that permission is not granted.
+func checkNetworkPolicies(pods []corev1.Pod, namespacesWithNetPol map[string]bool) []Finding {
+	seen := make(map[string]bool, len(pods))
+	var namespaces []string
+	for i := range pods {
+		ns := pods[i].Namespace
+		if seen[ns] || namespacesWithNetPol[ns] {
+			continue
+		}
+		seen[ns] = true
+		namespaces = append(namespaces, ns)
 	}
-	return []Finding{{
-		RuleID:     "KRUNT-004",
-		Severity:   pluginv1.Severity_SEVERITY_MEDIUM,
-		Confidence: pluginv1.Confidence_CONFIDENCE_MEDIUM,
-		Message:    fmt.Sprintf("Namespace %q has no NetworkPolicy — all traffic is allowed", pod.Namespace),
-		CWE:        "CWE-284",
-		Path:       podPath(pod.Namespace, pod.Name),
-		Namespace:  pod.Namespace,
-		Pod:        pod.Name,
-	}}
+	// Deterministic order: the pod list order is not guaranteed, and a scanner
+	// whose output reorders between runs produces spurious diffs.
+	sort.Strings(namespaces)
+
+	findings := make([]Finding, 0, len(namespaces))
+	for _, ns := range namespaces {
+		findings = append(findings, Finding{
+			RuleID:     "KRUNT-004",
+			Severity:   pluginv1.Severity_SEVERITY_MEDIUM,
+			Confidence: pluginv1.Confidence_CONFIDENCE_MEDIUM,
+			Message:    fmt.Sprintf("Namespace %q has no NetworkPolicy — all traffic is allowed", ns),
+			CWE:        "CWE-284",
+			Path:       namespacePath(ns),
+			Namespace:  ns,
+		})
+	}
+	return findings
+}
+
+// namespacePath builds the k8s:// path for a namespace-level finding.
+func namespacePath(namespace string) string {
+	return fmt.Sprintf("k8s://%s/Namespace/%s", namespace, namespace)
 }
 
 // checkResourceLimits checks KRUNT-005: No resource limits.

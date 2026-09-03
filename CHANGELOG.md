@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- KRUNT-004 is reported once per namespace instead of once per pod. A
+  namespace-level fact was evaluated inside the per-pod loop; on a 26-namespace
+  cluster that turned 5 facts into 49 findings, 27 of them the identical
+  sentence about one namespace.
+- KRUNT-004's location is now the namespace (`k8s://<ns>/Namespace/<ns>`)
+  rather than an arbitrary pod in it. Anchoring a namespace-level fact to a pod
+  name tied its fingerprint to a value that changes on every deploy, so a
+  baseline entry or waiver written against it broke the next time that pod was
+  replaced.
+
 - chore(deps): Go 1.26.5 and nox SDK v1.17.0 (#24)
 - chore(security): nox remediation (deps + actions) (#23)
 - ci: add nox-remediate caller (deps + action-pin remediation)
