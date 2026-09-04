@@ -97,9 +97,11 @@ func scanNetpolPaths(t *testing.T, pod *corev1.Pod) []string {
 		t.Fatal(err)
 	}
 	var paths []string
-	for _, f := range findings {
-		if f.RuleID == "KRUNT-004" {
-			paths = append(paths, f.Path)
+	// Indexed rather than ranged by value: Finding is 128 bytes and gocritic's
+	// rangeValCopy is enforced on new code here.
+	for i := range findings {
+		if findings[i].RuleID == "KRUNT-004" {
+			paths = append(paths, findings[i].Path)
 		}
 	}
 	return paths
