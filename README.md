@@ -1,5 +1,7 @@
 # nox-plugin-k8s-runtime
 
+[![nox security grade](.github/nox-badge.svg)](https://github.com/nox-hq/nox)
+
 **Inspect running Kubernetes workloads for security misconfigurations.**
 
 <!-- badges -->
