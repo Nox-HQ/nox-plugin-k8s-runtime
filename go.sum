@@ -65,8 +65,8 @@ github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee h1:W5t00kpgFd
 github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
-github.com/nox-hq/nox v1.68.0 h1:b/brTJfQQ/iHh0S1WM9tnoe2e+2IvesIcueWYMDWuEM=
-github.com/nox-hq/nox v1.68.0/go.mod h1:QuTod3Lawsr5deGYs9nlr+S4o86Dh8qwqr0jQijjpW0=
+github.com/nox-hq/nox v1.70.0 h1:5B02w281/PBjQO6jIw6y/K5Z5u2F+WhXZxd0YtCvvps=
+github.com/nox-hq/nox v1.70.0/go.mod h1:QuTod3Lawsr5deGYs9nlr+S4o86Dh8qwqr0jQijjpW0=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
